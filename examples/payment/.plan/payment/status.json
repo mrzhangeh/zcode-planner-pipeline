@@ -1,0 +1,21 @@
+{
+  "feature": "payment",
+  "status": "planned",
+  "created": "2026-08-24",
+  "current_task": "T01",
+  "last_error": null,
+  "metrics": {
+    "planner_turns": 1,
+    "coder_turns": 0,
+    "reviewer_turns": 0,
+    "coder_attempts": 0
+  },
+  "tasks": {
+    "T01": { "state": "pending", "retries": 0, "note": "", "review": "pending", "review_note": "" },
+    "T02": { "state": "pending", "retries": 0, "note": "", "review": "pending", "review_note": "" },
+    "T03": { "state": "pending", "retries": 0, "note": "", "review": "pending", "review_note": "" },
+    "T04": { "state": "pending", "retries": 0, "note": "", "review": "pending", "review_note": "" },
+    "T05": { "state": "pending", "retries": 0, "note": "", "review": "pending", "review_note": "" },
+    "T06": { "state": "pending", "retries": 0, "note": "", "review": "pending", "review_note": "" }
+  }
+}

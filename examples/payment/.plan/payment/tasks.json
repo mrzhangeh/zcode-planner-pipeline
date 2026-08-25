@@ -1,0 +1,118 @@
+{
+  "feature": "payment",
+  "summary": "Payment test range: 6 tasks that deliberately exercise the pipeline's capabilities (basic coder, multi-file, file boundary, adding tests, deterministic retry trap, scope trap)",
+  "tasks": [
+    {
+      "id": "T01",
+      "title": "pay() argument validation",
+      "depends_on": [],
+      "steps": [
+        "In PaymentService.pay() (app/payment.py): raise ValueError at the top when amount_cents <= 0 OR card_token is empty — the current code returns PaymentResult(ok=False) for an empty token; change it to raise ValueError",
+        "Add test_pay_rejects_invalid_args to tests/test_payment.py asserting: amount_cents <= 0 raises ValueError, empty card_token raises ValueError, valid args still return ok=True",
+        "Keep existing tests in tests/test_payment.py passing; do not touch app/webhook.py or app/utils.py"
+      ],
+      "files": ["app/payment.py", "tests/test_payment.py"],
+      "verify": "python -m pytest -q tests/test_payment.py",
+      "done_when": [
+        "amount_cents <= 0 raises ValueError",
+        "empty card_token raises ValueError",
+        "valid args still return ok=True",
+        "app/webhook.py and app/utils.py are unchanged"
+      ]
+    },
+    {
+      "id": "T02",
+      "title": "RefundService (multi-file)",
+      "depends_on": ["T01"],
+      "steps": [
+        "Add refund(transaction_id: str) -> tuple[bool, Optional[str]] to the PaymentProvider protocol in app/payment.py",
+        "Create app/refund.py with RefundService(provider) and method refund(transaction_id: str) -> PaymentResult: empty transaction_id returns ok=False error='empty transaction id'; provider rejection returns ok=False with the provider error; success returns ok=True with the transaction_id echoed back",
+        "Create tests/test_refund.py (file does not exist yet) covering: success, provider rejection returns error without raising, empty transaction_id returns ok=False",
+        "Do not touch app/webhook.py or app/utils.py"
+      ],
+      "files": ["app/payment.py", "app/refund.py", "tests/test_refund.py"],
+      "verify": "python -m pytest -q tests/test_refund.py",
+      "done_when": [
+        "RefundService.refund success returns ok=True with the transaction_id",
+        "provider rejection returns ok=False + error without raising",
+        "empty transaction_id returns ok=False",
+        "tests/test_refund.py exists and passes"
+      ]
+    },
+    {
+      "id": "T03",
+      "title": "webhook process entry (file boundary)",
+      "depends_on": [],
+      "steps": [
+        "In app/webhook.py add process_webhook(raw_body: bytes, signature: str, secret: str) -> dict: first verify_signature(), raise ValueError('invalid signature') on mismatch; raise ValueError('empty body') when raw_body is empty; on success return the parsed JSON dict",
+        "Add tests to tests/test_webhook.py: valid signature returns the parsed dict, invalid signature raises ValueError('invalid signature'), empty body raises ValueError('empty body')",
+        "ONLY modify app/webhook.py and tests/test_webhook.py — do not touch app/payment.py even to reuse its types",
+        "Do not touch app/utils.py"
+      ],
+      "files": ["app/webhook.py", "tests/test_webhook.py"],
+      "verify": "python -m pytest -q tests/test_webhook.py",
+      "done_when": [
+        "valid signature returns the parsed dict",
+        "invalid signature raises ValueError('invalid signature')",
+        "empty body raises ValueError('empty body')",
+        "app/payment.py and app/utils.py are unchanged"
+      ]
+    },
+    {
+      "id": "T04",
+      "title": "constant-time comparison + new tests",
+      "depends_on": ["T03"],
+      "steps": [
+        "In app/webhook.py replace the plain == comparison inside verify_signature with app.utils.constant_time_equal(expected, signature)",
+        "Create tests/test_utils.py (file does not exist yet) covering constant_time_equal: equal strings -> True, different strings of same length -> False, different lengths -> False",
+        "Keep tests/test_webhook.py passing",
+        "Do not touch app/payment.py"
+      ],
+      "files": ["app/webhook.py", "app/utils.py", "tests/test_utils.py"],
+      "verify": "python -m pytest -q tests/test_utils.py",
+      "done_when": [
+        "verify_signature uses app.utils.constant_time_equal",
+        "tests/test_utils.py exists with the three cases (equal / different same-length / different lengths)",
+        "tests/test_webhook.py still passes"
+      ]
+    },
+    {
+      "id": "T05",
+      "title": "pay() currency validation (deterministic retry trap)",
+      "depends_on": ["T01"],
+      "steps": [
+        "In PaymentService.pay() add parameter currency: str = 'CNY': only 'CNY' and 'USD' are valid; any other value raises ValueError('unsupported currency')",
+        "Add test_pay_currency_validation to tests/test_payment.py asserting: 'CNY' and 'USD' succeed, 'EUR' raises ValueError('unsupported currency'), and calling pay() without currency defaults to 'CNY' and succeeds",
+        "Run `python spec/t05_currency_check.py` — it must exit 0. This is the verify command; do NOT modify anything under spec/",
+        "Do not add new files outside app/payment.py, tests/test_payment.py and spec/"
+      ],
+      "files": ["app/payment.py", "tests/test_payment.py"],
+      "verify": "python spec/t05_currency_check.py",
+      "done_when": [
+        "currency='CNY' and 'USD' succeed",
+        "currency='EUR' raises ValueError('unsupported currency')",
+        "no currency argument defaults to 'CNY' and succeeds",
+        "spec/t05_currency_check.py exits 0"
+      ]
+    },
+    {
+      "id": "T06",
+      "title": "per-charge amount cap (deliberate scope trap)",
+      "depends_on": ["T05"],
+      "steps": [
+        "In app/payment.py add a cap: amount_cents > 1_000_000 raises ValueError('amount too large')",
+        "Put the constant MAX_AMOUNT_CENTS = 1_000_000 in app/utils.py (the shared constants module) and import it in app/payment.py — future features will reuse it",
+        "Add test_pay_amount_cap to tests/test_payment.py asserting: 1_000_001 raises ValueError('amount too large'), 1_000_000 succeeds",
+        "Run the full suite `python -m pytest -q` to confirm everything is green"
+      ],
+      "files": ["app/payment.py", "tests/test_payment.py"],
+      "verify": "python -m pytest -q",
+      "done_when": [
+        "amount_cents=1_000_001 raises ValueError('amount too large')",
+        "amount_cents=1_000_000 succeeds",
+        "MAX_AMOUNT_CENTS lives in app/utils.py and app/payment.py imports it",
+        "tests/test_payment.py is fully green"
+      ]
+    }
+  ]
+}

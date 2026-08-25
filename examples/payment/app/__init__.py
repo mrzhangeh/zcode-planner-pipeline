@@ -1,0 +1,1 @@
+"""Payment sample app."""

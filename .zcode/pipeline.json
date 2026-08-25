@@ -1,0 +1,12 @@
+{
+  "_comment": "模型路由配置点。provider 名与 ZCode 里配置的 provider 一致（如“基元”），model 用 ZCode 里列出的模型 id。v2：execution.driver = subagent——coder/reviewer 由子代理钉模型执行（~/.zcode/agents/coder-z.md、reviewer-z.md 的 model 字段），主会话经 Agent 工具委派，全程只需保持主会话为 roles.planner 模型。v1（driver=self）则靠手动切会话模型。换模型只改这里并同步子代理文件。",
+  "roles": {
+    "planner": { "provider": "基元", "model": "deepseek-v4-flash-0731" },
+    "coder": { "provider": "基元", "model": "deepseek-v4-flash" },
+    "reviewer": { "provider": "基元", "model": "deepseek-v4-flash" }
+  },
+  "execution": {
+    "driver": "subagent",
+    "max_task_retries": 3
+  }
+}
