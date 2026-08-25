@@ -77,7 +77,7 @@ The commands read `.zcode/pipeline.json` inside your project, falling back to `~
 
 ## Usage
 
-With `driver: subagent` (v2) you select the session model **once** — the planner model (`roles.planner`); coder and reviewer run as pinned subagents.
+You select the session model **once** — the planner model (`roles.planner`); coder and reviewer run as pinned subagents.
 
 1. Set the session model to the **planner** model (`roles.planner`).
 2. Run `/plan-z <feature>`. It explores the repo and writes `.plan/<feature>/` (`plan.md`, `tasks.json`, `status.json`), then **stops** — review the plan before implementing.

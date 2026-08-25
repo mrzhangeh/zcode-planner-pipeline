@@ -77,7 +77,7 @@ cp .zcode/agents/*.md ~/.zcode/agents/   # v2：钉死模型的 coder/reviewer �
 
 ## 使用
 
-v2（`driver: subagent`）下你只需选**一次**会话模型——planner 模型（`roles.planner`）；coder 和 reviewer 由钉死模型的子代理自动执行。
+你只需选**一次**会话模型——planner 模型（`roles.planner`）；coder 和 reviewer 由钉死模型的子代理自动执行。
 
 1. 把会话模型切到 **planner 模型**（`roles.planner`）。
 2. 运行 `/plan-z <feature>`。它探索仓库并写出 `.plan/<feature>/`（`plan.md`、`tasks.json`、`status.json`），然后**停住**——实现前先审阅计划。

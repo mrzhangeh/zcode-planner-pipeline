@@ -18,12 +18,9 @@ Config resolution order (per command body): project `.zcode/pipeline.json` → `
 
 ## How the models are actually invoked
 
-`execution.driver` in `pipeline.json` decides:
+Single-driver design (`execution.driver: subagent`): coder/reviewer run as pinned subagents — `~/.zcode/agents/coder-z.md` and `~/.zcode/agents/reviewer-z.md` carry `model: deepseek-v4-flash`. The main session stays on `roles.planner` for the whole cycle and delegates via the Agent tool — one manual model selection per feature.
 
-- `subagent` (v2, current) — coder/reviewer run as pinned subagents: `~/.zcode/agents/coder-z.md` and `~/.zcode/agents/reviewer-z.md` carry `model: deepseek-v4-flash`. The main session stays on `roles.planner` for the whole cycle and delegates via the Agent tool — one manual model selection per feature.
-- `self` (v1) — the session model is the role model; switch manually between stages (planner → `/plan-z`, coder → `/dev-z`, reviewer → `/review-z`).
-
-Keep `roles.coder` / `roles.reviewer` in `pipeline.json` in sync with the subagent `model` fields — the config is the contract, the subagent files are the mechanism.
+**`pipeline.json` is the single source of truth for model ids.** Never hand-edit the `model` field in the agent files: change `pipeline.json`, run `python scripts/sync_agents.py` (patches the agent frontmatter), then `python scripts/validate.py` verifies no drift.
 
 ## Upgrade paths (v2)
 

@@ -75,7 +75,7 @@ The provider's models then appear in the model selector (`deepseek-v4-flash-0731
 ```
 
 - `provider` must match the provider name configured in ZCode; `model` must match the id shown in the model selector.
-- `execution.driver`: `subagent` (v2, recommended) — coder/reviewer run as pinned subagents; `self` (v1) — you switch the session model manually between stages.
+- `execution.driver`: fixed to `subagent` — coder/reviewer run as pinned subagents; there is no other mode.
 - `execution.max_task_retries`: how many times the coder retries a failing task before it is marked `failed`.
 
 ### 4.3 Subagent `model` fields (keep in sync)

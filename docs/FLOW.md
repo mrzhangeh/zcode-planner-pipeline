@@ -2,7 +2,7 @@
 
 ## Stages
 
-Run the three commands in order, or `/pipeline-z <feature>` for a guided one-shot run that stops at each checkpoint. With `driver: subagent` (v2) the session model is selected once (planner); coder/reviewer are pinned subagents (`coder-z`, `reviewer-z`).
+Run the three commands in order, or `/pipeline-z <feature>` for a guided one-shot run that stops at each checkpoint. The session model is selected once (planner); coder/reviewer are pinned subagents (`coder-z`, `reviewer-z`).
 
 ```
 User request
@@ -39,7 +39,7 @@ User request
 | Coder (`/dev-z`) | cheap (`coder-z` subagent) | mechanically execute tasks; rework `review: fail` tasks | redesign, scope-creep |
 | Reviewer (`/review-z`) | cheap (`reviewer-z` subagent) | check diffs vs acceptance, scope, minimality | modify code, replace the test gate |
 
-> With `execution.driver: subagent` (v2) the Coder/Reviewer are pinned subagents (`~/.zcode/agents/coder-z.md`, `reviewer-z.md`) launched via the Agent tool; with `driver: self` (v1) they are the session model.
+> Coder/Reviewer are pinned subagents (`~/.zcode/agents/coder-z.md`, `reviewer-z.md`) launched via the Agent tool — this is the only driver (`execution.driver: subagent`).
 
 ## Gates
 

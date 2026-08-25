@@ -74,6 +74,10 @@ def main() -> int:
     # 1. pipeline.json
     pipe = check_json(ROOT / ".zcode" / "pipeline.json", required=("roles", "execution"))
     check_no_bom(ROOT / ".zcode" / "pipeline.json")
+    if pipe:
+        driver = (pipe.get("execution") or {}).get("driver")
+        if driver != "subagent":
+            fail(f"pipeline.json: execution.driver must be 'subagent' (single-driver design), got '{driver}'")
 
     # 2. commands + agents frontmatter
     for f in sorted(COMMANDS.glob("*.md")):

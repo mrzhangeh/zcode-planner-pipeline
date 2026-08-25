@@ -20,6 +20,10 @@
 
 Smoke tests (2026-08-24): Round 1 — full loop passed (6/6 done, 16 tests, 0 retries, traps missed). Round 2 — T06 stop verified (CONTRACT_ISSUE → failed + blocked, no force-through); T05 still 0 retries (deterministic spec check holds, retry loop unobserved); metrics sane (attempts ≥ turns). Evidence: docs/SMOKE_TEST.md.
 
+Decision (2026-08-24): the retry loop is accepted as a known-unobserved path (bounded by `max_task_retries`; no fault-injection run planned).
+
+P4 done (2026-08-24): single driver (`self` removed, `execution.driver: subagent` enforced by validate.py), `scripts/sync_agents.py` (pipeline.json → agent frontmatter), command slimming (dev-z / review-z / pipeline-z now orchestration-only).
+
 ## v3 — future
 
 - Automated escalation: review fails N times → auto re-plan (SWE-AF three-ring, simplified)

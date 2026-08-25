@@ -75,7 +75,7 @@ cp .zcode/agents/*.md ~/.zcode/agents/
 ```
 
 - `provider` 必须和 ZCode 里配置的提供商名一致；`model` 必须和模型选择器里显示的 id 一致。
-- `execution.driver`：`subagent`（v2，推荐）——coder/reviewer 由钉死模型的子代理执行；`self`（v1）——手动在各阶段切换会话模型。
+- `execution.driver`：固定为 `subagent`——coder/reviewer 由钉死模型的子代理执行，没有其他模式。
 - `execution.max_task_retries`：任务测试失败时 coder 最多重试几次，超过则标记 `failed`。
 
 ### 4.3 子代理的 `model` 字段（保持同步）

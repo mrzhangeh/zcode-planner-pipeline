@@ -66,3 +66,4 @@ Flow rerun with the strengthened traps. Same environment; baseline re-committed.
 
 - ✅ Verified: failed-stop with manual re-plan (T06 CONTRACT_ISSUE), scope-respect by the coder.
 - ⚠️ Still unobserved: the retry loop itself (no task has ever failed verify). The mechanism is simple and bounded by `max_task_retries`; a targeted fault-injection probe is the remaining way to observe it.
+- **Decision (2026-08-24)**: accepted as a known-unobserved path — no fault-injection run planned; `max_task_retries` is the guardrail.
